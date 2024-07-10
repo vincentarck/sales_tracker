@@ -1,4 +1,5 @@
 import datetime
+import csv  
 relation_of_products_name = {
     "P001": "Wireless Headphones",
     "P002": "Laptop Backpack" ,
@@ -28,23 +29,30 @@ relation_of_products_price = {
 sales_tracker_data = []
 
 with open('product_sales.txt', 'r') as text_file:
-    for count, line in enumerate(text_file):
+    sale_id = 1
+    for line in text_file:
         rmv_newline = line.strip()
         if relation_of_products_name.get(rmv_newline):
             # Programmatically convert data for each row in csv file
             current_date = datetime.date.today()
-            sale_id = count + 1
             product_id = rmv_newline
             product_name = relation_of_products_name.get(rmv_newline)
             product_price = relation_of_products_price.get(product_name)
             
             # Adding data for each row
-            sales_tracker_data.append([current_date, sale_id, product_id, product_name])
+            sales_tracker_data.append([current_date, sale_id, product_id, product_name, product_price])
             
             # Remove duplicates in key of product_sales
             del relation_of_products_name[rmv_newline]
+            
+            # Adding unique product id
+            sale_id = sale_id + 1
 
-            print(rmv_newline, relation_of_products_name)
 
-
-        
+with open("product_sales.csv", "w", newline="") as csv_file:
+    headers = ["current_date", "sale_id", "product_id", "name", "price"]
+    
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerow(headers)
+    
+    csv_writer.writerows(sales_tracker_data)
